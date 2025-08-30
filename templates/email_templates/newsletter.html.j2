@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Weekly Newsletter</title>
+    <style>
+        body { margin: 0; padding: 0; background-color: #f4f7fb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1a202c; }
+        .container { max-width: 650px; margin: 30px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.08); border: 1px solid #e5e7eb; }
+        
+        .header { background-color: #1e40af; background: linear-gradient(135deg, #3b82f6, #1e40af); color: #ffffff; padding: 40px 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
+        .header p { margin: 8px 0 0; font-size: 15px; color: #dbeafe; }
+        
+        .content { padding: 20px 35px 40px; }
+        .section-title { font-size: 22px; font-weight: 700; color: #1e293b; padding-bottom: 10px; margin-top: 40px; margin-bottom: 20px; border-bottom: 3px solid #e2e8f0; }
+        
+        .card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 24px; margin-bottom: 24px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+        .card.list-card:hover { transform: none; box-shadow: none; }
+        
+        .item-title { font-size: 19px; font-weight: 700; margin: 0 0 10px; }
+        .item-title a { color: #1e293b; text-decoration: none; transition: color 0.2s ease; }
+        .item-title a:hover { color: #3b82f6; } /* Title links turn blue on hover */
+        .item-summary { font-size: 15px; color: #475569; line-height: 1.7; margin: 0 0 18px; }
+        
+        .cta-button { display: inline-block; background-color: #2563eb; background: linear-gradient(135deg, #3b82f6, #2563eb); color: #ffffff; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; transition: transform 0.2s ease; }
+        .cta-button:hover { transform: translateY(-2px); }
+        
+        .quote-section { background-color: #f1f5f9; border-left: 5px solid #3b82f6; padding: 24px; margin: 30px 0; border-radius: 6px; }
+        .quote-text { font-style: italic; font-size: 18px; color: #1e293b; margin: 0; line-height: 1.6; }
+        .quote-author { text-align: right; font-weight: 600; color: #475569; margin-top: 12px; }
+        
+        .list-card { padding: 0 20px 10px; }
+        .list-item { display: block; padding: 16px 0; border-bottom: 1px solid #e5e7eb; text-decoration: none; border-radius: 6px; transition: background-color 0.2s ease; }
+        .list-item:last-child { border-bottom: none; }
+        .list-item:hover { background-color: #f8fafc; } /* Highlight background on hover */
+        .list-item-title { font-size: 16px; font-weight: 600; color: #1e293b; margin: 0 0 4px; transition: color 0.2s ease; }
+        .list-item-summary { font-size: 14px; color: #475569; margin: 0; line-height: 1.5; }
+        .list-item:hover .list-item-title { color: #3b82f6; } /* Title turns blue on hover */
+        
+        .footer { background-color: #f8fafc; color: #64748b; padding: 24px; text-align: center; font-size: 13px; border-top: 1px solid #e5e7eb; }
+        .footer a { color: #2563eb; text-decoration: none; transition: color 0.2s ease; }
+        .footer a:hover { color: #1e40af; text-decoration: underline; } /* Footer links get darker and underlined on hover */
+    </style>
+</head>
+<body bgcolor="#f4f7fb">
+    <div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">
+        {% if content['Big Story of the Week'] %}{{ content['Big Story of the Week'][0].title }}{% else %}Your weekly briefing on AI is here!{% endif %}
+    </div>
+
+    <div class="container" bgcolor="#ffffff">
+        <div class="header" align="center">
+            <h1>AI Weekly News</h1>
+            <p>Your Student Briefing for {{ issue_date }}</p>
+        </div>
+
+        <div class="content">
+            <p class="item-summary" style="font-size:16px;">Welcome back! This week, we're diving into the most important developments in AI, from major model releases to must-know tools. Let's get started.</p>
+
+            {% if content['Big Story of the Week'] %}
+            <h2 class="section-title">🚀 Big Story of the Week</h2>
+            <div class="card">
+                {% for item in content['Big Story of the Week'] %}
+                <p class="item-title"><a href="{{ item.url }}">{{ item.title }}</a></p>
+                <p class="item-summary">{{ item.summary }}</p>
+                <a href="{{ item.url }}" class="cta-button">Read the full story</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if content['Top Research Paper'] %}
+            <h2 class="section-title">🔬 Top Research Paper</h2>
+            <div class="card">
+                {% for item in content['Top Research Paper'] %}
+                <p class="item-title"><a href="{{ item.url }}">{{ item.title }}</a></p>
+                <p class="item-summary">{{ item.summary }}</p>
+                <a href="{{ item.url }}" class="cta-button">Read the paper</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if content['Top GitHub Repo'] %}
+            <h2 class="section-title">💻 Top GitHub Repo</h2>
+            <div class="card">
+                {% for item in content['Top GitHub Repo'] %}
+                <p class="item-title"><a href="{{ item.url }}">{{ item.title }}</a></p>
+                <p class="item-summary">{{ item.summary }}</p>
+                <a href="{{ item.url }}" class="cta-button">View on GitHub</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if content['Quote_of_the_Week'] %}
+            <h2 class="section-title">💡 Quote of the Week</h2>
+            <div class="quote-section">
+                {% for item in content['Quote_of_the_Week'] %}
+                <p class="quote-text">"{{ item.quote }}"</p>
+                <p class="quote-author">&mdash; {{ item.author }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if content['Top_AI_Tools_and_Products'] %}
+            <h2 class="section-title">🛠️ Top AI Tools & Products</h2>
+            <div class="card list-card">
+                {% for item in content['Top_AI_Tools_and_Products'] %}
+                <a href="{{ item.url }}" class="list-item">
+                    <div class="list-item-title">{{ item.name }}</div>
+                    <div class="list-item-summary">{{ item.summary }}</div>
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            {% if content['Top_X_Post'] %}
+            <h2 class="section-title">🐦 Top X Post</h2>
+            <div class="card">
+                {% for item in content['Top_X_Post'] %}
+                <p class="item-summary">"{{ item.summary }}"</p>
+                <a href="{{ item.url }}" class="cta-button">Read on X</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if content['AI_Job_Spotlight'] %}
+            <h2 class="section-title">💼 AI Job Spotlight</h2>
+            <div class="card list-card">
+                {% for job in content['AI_Job_Spotlight'] %}
+                <a href="{{ job.url }}" class="list-item">
+                    <div class="list-item-title">{{ job.title }} at {{ job.company }}</div>
+                    <div class="list-item-summary">{{ job.description }}</div>
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <h2 class="section-title">🤝 Share the Newsletter</h2>
+            <div class="card">
+              <p class="item-summary">
+                Enjoying AI Weekly Newsletter? Share it with a friend or classmate who wants to stay ahead in the world of AI!
+              </p>
+              
+              <!-- Forward to Friend -->
+              <a href="*|FORWARD|*" class="cta-button">Forward to a Friend</a>
+              
+              <!-- Social Media Share -->
+              <div class="social-share" style="margin-top:15px;">
+                <p style="margin-bottom:8px;">Share on:</p>
+                <a href="https://twitter.com/intent/tweet?url=*|ARCHIVE|*&text=Check+out+AI+Weekly+Newsletter!" target="_blank">🐦 Twitter</a> |
+                <a href="https://www.facebook.com/sharer/sharer.php?u=*|ARCHIVE|*" target="_blank">📘 Facebook</a> |
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=*|ARCHIVE|*" target="_blank">💼 LinkedIn</a> |
+                <a href="https://wa.me/?text=Check+out+AI+Weekly+Newsletter:+*|ARCHIVE|*" target="_blank">📱 WhatsApp</a> |
+                <a href="https://t.me/share/url?url=*|ARCHIVE|*&text=AI+Weekly+Newsletter" target="_blank">✈️ Telegram</a>
+              </div>
+            </div>
+
+
+        <div class="footer" bgcolor="#f8fafc" align="center">
+            <p>You're receiving this because you subscribed to AI Weekly News.</p>
+            <p><a href="*|UNSUB|*">Unsubscribe</a> | &copy; 2025 AI Weekly News</p>
+            <p>Engineer Babu, Aurangabad, Bihar</p>
+        </div>
+    </div>
+</body>
+</html>
