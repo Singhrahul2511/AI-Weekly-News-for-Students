@@ -36,4 +36,5 @@ COPY . .
 # Expose port and define start command
 # Port will be set by Render via the $PORT environment variable
 EXPOSE 8000
-CMD ["uvicorn", "web.app:app", "--host", "0.0.0.0", "--port", "8000"]
+# This version correctly uses the $PORT variable provided by Render
+CMD uvicorn web.app:app --host 0.0.0.0 --port $PORT
