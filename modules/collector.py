@@ -1,20 +1,28 @@
 # modules/collector.py
 import feedparser
 import requests
+from requests.adapters import HTTPAdapter, Retry
 from typing import List, Dict, Set
 import logging
 import os
 from datetime import datetime, timedelta
-
-# --- New: Add Tweepy for Twitter/X integration ---
-# Make sure to run: pip install tweepy
-# And add your bearer token to the .env file
 import tweepy
 
 from config import settings
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# --- New: Create a resilient requests session ---
+# This session will act like a browser and automatically retry failed requests
+session = requests.Session()
+session.headers.update({
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+})
+retries = Retry(total=3, backoff_factor=0.5, status_forcelist=[500, 502, 503, 504])
+session.mount('http://', HTTPAdapter(max_retries=retries))
+session.mount('https://', HTTPAdapter(max_retries=retries))
+
 
 # --- Configuration for Content Sources ---
 SOURCES = {
@@ -25,11 +33,9 @@ SOURCES = {
         "https://www.deepmind.com/blog/rss.xml",
     ],
     "research": "http://export.arxiv.org/rss/cs.AI",
-    # --- New: Define influential X accounts to monitor ---
     "x_accounts": ["karpathy", "ylecun", "AndrewYNg", "sama"],
 }
 
-# --- New: Configure Tweepy API ---
 try:
     twitter_client = tweepy.Client(settings.X_BEARER_TOKEN)
     X_AVAILABLE = True
@@ -39,10 +45,14 @@ except Exception as e:
 
 
 def fetch_rss_feed(url: str, limit: int = 5) -> List[Dict]:
-    """Fetches and parses an RSS feed."""
+    """Fetches and parses an RSS feed using our resilient session."""
     items = []
     try:
-        feed = feedparser.parse(url)
+        # Using feedparser's ability to take a file-like object
+        response = session.get(url, timeout=15)
+        response.raise_for_status()
+        feed = feedparser.parse(response.content)
+        
         for entry in feed.entries[:limit]:
             items.append({
                 "source": "rss",
@@ -70,16 +80,19 @@ def fetch_trending_github_repos() -> List[Dict]:
     """Fetches trending AI repositories directly from GitHub's API."""
     logger.info("Fetching trending GitHub repos from official API...")
     items = []
-    # URL searches for topics:ai, sorts by stars, created in the last month
     one_month_ago = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
     url = f"https://api.github.com/search/repositories?q=topic:artificial-intelligence+created:>{one_month_ago}&sort=stars&order=desc"
-
+    
     try:
-        # The official API requires a User-Agent header
-        headers = {'User-Agent': 'AI-Newsletter-App'}
-        response = requests.get(url, headers=headers, timeout=10)
+        # Using the same resilient session headers
+        headers = session.headers.copy()
+        github_token = settings.GITHUB_PAT
+        if github_token:
+            headers['Authorization'] = f"token {github_token}"
+        
+        response = session.get(url, headers=headers, timeout=15)
         response.raise_for_status()
-
+        
         for repo in response.json().get("items", [])[:5]:
             items.append({
                 "source": "github",
@@ -90,29 +103,21 @@ def fetch_trending_github_repos() -> List[Dict]:
     except Exception as e:
         logger.error(f"Failed to fetch GitHub repos: {e}")
     return items
+
 def fetch_top_x_posts() -> List[Dict]:
-    """Fetches recent, popular tweets from a list of influential accounts."""
+    # ... (this function remains the same, as tweepy handles its own connections)
     if not X_AVAILABLE:
         return []
     
     logger.info("Fetching top X posts...")
     all_tweets = []
-    
-    # Get tweets from the last 7 days
     start_time = datetime.utcnow() - timedelta(days=7)
     
     for username in SOURCES["x_accounts"]:
         try:
             user = twitter_client.get_user(username=username).data
             if user:
-                tweets = twitter_client.get_users_tweets(
-                    id=user.id,
-                    max_results=5,
-                    start_time=start_time,
-                    tweet_fields=["public_metrics", "created_at"],
-                    exclude=["replies", "retweets"]
-                ).data
-                
+                tweets = twitter_client.get_users_tweets(id=user.id, max_results=5, start_time=start_time, tweet_fields=["public_metrics", "created_at"], exclude=["replies", "retweets"]).data
                 if tweets:
                     for tweet in tweets:
                         all_tweets.append({
@@ -125,7 +130,6 @@ def fetch_top_x_posts() -> List[Dict]:
         except Exception as e:
             logger.error(f"Could not fetch tweets for {username}: {e}")
 
-    # Sort tweets by a simple engagement metric (likes + retweets) and return top 5
     if not all_tweets:
         return []
         
@@ -134,12 +138,9 @@ def fetch_top_x_posts() -> List[Dict]:
 
 
 def collect_all_content() -> List[Dict]:
-    """
-    Collects content from all sources, deduplicates, and returns a clean list.
-    """
+    # ... (this function remains the same)
     logger.info("Starting content collection...")
     
-    # Fetch from all sources
     arxiv_papers = fetch_arxiv()
     blog_posts = fetch_blogs()
     github_repos = fetch_trending_github_repos()
@@ -147,7 +148,6 @@ def collect_all_content() -> List[Dict]:
     
     all_items = arxiv_papers + blog_posts + github_repos + x_posts
     
-    # Deduplicate based on URL
     unique_items = []
     seen_urls: Set[str] = set()
     
