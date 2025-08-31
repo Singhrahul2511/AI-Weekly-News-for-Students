@@ -1,5 +1,4 @@
 # config.py
-import os
 from pydantic_settings import BaseSettings
 from typing import Optional
 
@@ -11,7 +10,7 @@ class Settings(BaseSettings):
     ADMIN_EMAIL: str
     
     # Database
-    DATABASE_URL: str = "sqlite:///./newsletter.db"
+    DATABASE_URL: str
     
     # Mailchimp
     MAILCHIMP_API_KEY: str
@@ -22,7 +21,12 @@ class Settings(BaseSettings):
     
     # Gemini
     GEMINI_API_KEY: str
+
+    # X/Twitter
     X_BEARER_TOKEN: Optional[str] = None
+
+    # GitHub
+    GITHUB_PAT: Optional[str] = None # <-- ADD THIS LINE
 
     class Config:
         env_file = ".env"
