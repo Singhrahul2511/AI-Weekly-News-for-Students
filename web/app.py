@@ -10,6 +10,8 @@ from modules.storage import add_subscriber, get_all_active_subscribers, get_last
 from web.models import Subscriber, Issue
 from config import settings
 from tasks.run_weekly import orchestrate_newsletter_creation
+# Add these imports at the top of web/app.py
+from fastapi import BackgroundTasks
 
 app = FastAPI(title="AI Newsletter Service")
 
@@ -87,3 +89,33 @@ async def trigger_dry_run(token: str = Form(...)):
         return RedirectResponse(url=f"/admin?token={token}", status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+# # Add these imports at the top of web/app.py
+# from fastapi import BackgroundTasks
+
+# Add this new function somewhere before the new endpoint
+def run_newsletter_task():
+    """Wrapper function to run the newsletter orchestration."""
+    # We are calling the function with default arguments (send=True, test_email=ADMIN_EMAIL)
+    # Note: For a real production system, you might pass these as parameters
+    from tasks.run_weekly import orchestrate_newsletter_creation
+    from config import settings
+    
+    # Setting dry_run=False sends the real email
+    orchestrate_newsletter_creation(dry_run=False, send_test_email_first=True, admin_email=settings.ADMIN_EMAIL)
+
+# Add this new endpoint at the end of web/app.py
+@app.post("/tasks/run-weekly-job")
+async def trigger_weekly_job(token: str, background_tasks: BackgroundTasks):
+    """
+    A secure endpoint to be called by an external scheduler (like GitHub Actions).
+    It runs the newsletter creation and sending process in the background.
+    """
+    # Verify the secret token to ensure only authorized services can run the job
+    verify_admin_token(token)
+    
+    # Add the long-running task to the background
+    background_tasks.add_task(run_newsletter_task)
+    
+    # Immediately return a response to the scheduler
+    return {"message": "Weekly newsletter job has been triggered successfully in the background."}

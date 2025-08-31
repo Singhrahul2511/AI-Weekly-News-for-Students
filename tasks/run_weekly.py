@@ -24,7 +24,7 @@ def generate_subject_line(big_story_title: str) -> str:
     ]
     return random.choice(variants)
 
-def orchestrate_newsletter_creation(dry_run: bool = True):
+def orchestrate_newsletter_creation(dry_run: bool = True, send_test_email_first: bool = True, admin_email: str = None):
     """
     Full pipeline: Collect -> Summarize -> Categorize -> Render -> Send/Save
     """
@@ -84,12 +84,14 @@ def orchestrate_newsletter_creation(dry_run: bool = True):
         return
         
     # Send test email
-    if args.test_email:
-        if not mailer.send_test_email(campaign_id, args.test_email):
-            logging.error("Failed to send test email. Aborting live send.")
+    # And replace it with this improved version:
+    if not dry_run and send_test_email_first and admin_email:
+        if not mailer.send_test_email(campaign_id, admin_email):
+            logging.error(f"Failed to send test email to {admin_email}. Aborting live send.")
             return
-        input(f"Test email sent to {args.test_email}. Press Enter to confirm and send to the main list...")
-
+        logging.info(f"Test email sent successfully to {admin_email}. Proceeding with main send in 10 seconds...")
+        import time
+        time.sleep(10) # Add a small delay instead of waiting for user input
     # Send to main list
     if mailer.send_campaign(campaign_id):
         logging.info("Campaign sent successfully!")
