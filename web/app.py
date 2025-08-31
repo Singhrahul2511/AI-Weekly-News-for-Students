@@ -29,8 +29,8 @@ def verify_admin_token(token: str):
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    """Serves the main landing/subscription page."""
-    return templates.TemplateResponse("index.html", {"request": request})
+    # Always pass success and error so the template always renders correctly
+    return templates.TemplateResponse("index.html", {"request": request, "success": None, "error": None})
 
 @app.post("/subscribe", status_code=status.HTTP_201_CREATED)
 async def handle_subscribe(request: Request, email: str = Form(...)):
