@@ -122,16 +122,16 @@ This project is built on a modern, decoupled architecture. The automation, backe
 ## 🛠️ Tech Stack
 
 
-      | Category    | Technology                                                |
-      | :---------- | :-------------------------------------------------------- |
-      | **Backend** | Python 3.12, FastAPI, SQLAlchemy                          |
-      |**Frontend**| Docker, Render, Supabase                                   |
-      | **Database**| PostgreSQL (hosted on Supabase)                           |
-      | **AI / LLM**| Google Gemini API                                         |
-      |**Scheduler**| GitHub Actions                                            |
-      |**Deployment**| Docker, Render, Supabase                                 |
-      |**Deployment**| Docker, Render, Supabase                                 |
-      |**Core**| Libs	requests, feedparser, tweepy, premailer, sumy             |
+| Category    | Technology                                                |
+| :---------- | :-------------------------------------------------------- |
+| **Backend** | Python 3.12, FastAPI, SQLAlchemy                          |
+|**Frontend** | Docker, Render, Supabase                                  |
+| **Database**| PostgreSQL (hosted on Supabase)                           |
+| **AI / LLM**| Google Gemini API                                         |
+|**Scheduler**| GitHub Actions                                            |
+|**Deployment**| Docker, Render, Supabase                                 |
+|**Deployment**| Docker, Render, Supabase                                 |
+|**Core**| Libs	requests, feedparser, tweepy, premailer, sumy             |
 
 ---
 
