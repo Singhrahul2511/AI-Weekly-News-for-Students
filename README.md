@@ -26,8 +26,9 @@
 
 ### **Live Demo**
 
-* **📰 Live Landing Page:** `https://ai-newsletter-backend.onrender.com/`
-* **📬 View the Last Sent Issue:** `https://ai-newsletter-backend.onrender.com/last`
+* **📰 Live Landing Page: **[https://ai-newsletter-backend.onrender.com/]**
+* **📬 View the Last Sent Issue: **[https://ai-newsletter-backend.onrender.com/last]**
+
 * **🔑 Admin Panel (Protected):** `https://ai-newsletter-backend.onrender.com/admin?token=[YOUR_ADMIN_TOKEN]`
 
 ---
@@ -63,16 +64,27 @@ This project solves the problem by creating a **fully automated pipeline** that 
 ## 🖼️ **Demo Screenshots**
 
 ### 📝 Subscribe to Newsletter
-![Analyze Team H2H](demo/one.png)
+![Subscribe Here To Get Weekly News Updates](demo/one.png)
 
 ### 📰 Auto-Generated Weekly Newsletter
-![Get Player Statistics](demo/two.png)
+![See Sample News Formate](demo/two.png)
 
 ### 📊 Admin Dashboard – Manage Subscribers & Issues
-![Get Player Statistics](demo/th.png)
+![Admin Dashboard](demo/th.png)
 
 ### 📤 Automated Email Delivery (Sent to Subscribers)
-![Winning Chances](demo/fo.png)
+![Picture of Email Deliverd](demo/fo.png)
+
+### 🤖 AI-Generated Content (Summaries & Highlights) and 📑 Top Research Paper
+![Big News and Top Research Paper of Week](demo/fi.png)
+
+
+### 💡 Quote of the Week
+![Quote of the Week](demo/si.png)
+
+
+### 🛠️ Top AI Tools & Products and 💼 AI Job Spotlight
+![Top AI Tools & Products and AI Job Spotlight](demo/se.png)
 
 ---
 
@@ -92,7 +104,7 @@ This project solves the problem by creating a **fully automated pipeline** that 
 
 This project is built on a modern, decoupled architecture. The automation, backend, and database are all separate, scalable components.
 
-```mermaid
+```bash
 flowchart TD
     A[GitHub Actions Scheduler <br> (Every Sunday at 20:00 UTC)] --> B{POST Request};
     B --> C[Render Web Service <br> /tasks/run-weekly-job];
@@ -104,89 +116,28 @@ flowchart TD
     H -- Delivers Email --> I[Subscriber Inboxes];
     J[User] --> K[Render Web Service <br> (Landing Page & Subscription)];
     K -- Writes Data --> G;
-🛠️ Tech Stack
-Category	Technology
-Backend	Python, FastAPI, SQLAlchemy
-Database	PostgreSQL (hosted on Supabase)
-AI / LLM	Google Gemini API
-Email	Mailchimp API
-Scheduler	GitHub Actions
-Deployment	Docker, Render, Supabase
-Core Libs	requests, feedparser, tweepy, premailer, sumy
+```
 
-Export to Sheets
-🚀 Getting Started (Local Development)
-Follow these instructions to set up and run the project on your local machine.
+---
+## 🛠️ Tech Stack
 
-Prerequisites
-Python 3.11+
+| Category    | Technology                                                |
+| :---------- | :-------------------------------------------------------- |
+| **Backend** | Python 3.12, FastAPI, SQLAlchemy                          |
+|**Frontend**| Docker, Render, Supabase                                   |
+| **Database**| PostgreSQL (hosted on Supabase)                           |
+| **AI / LLM**| Google Gemini API                                         |
+|**Scheduler**| GitHub Actions                                            |
+|**Deployment**| Docker, Render, Supabase                                 |
+|**Deployment**| Docker, Render, Supabase                                 |
+|**Core**| Libs	requests, feedparser, tweepy, premailer, sumy             |
 
-A code editor (e.g., VS Code)
 
-API keys for:
+---
 
-Google Gemini
+## 📁 Project Structure
 
-Mailchimp
-
-X (Twitter) API (Optional)
-
-GitHub PAT (Optional, for higher rate limits)
-
-Installation
-Clone the repository:
-
-Bash
-
-git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
-cd your-repo-name
-Create a virtual environment:
-
-Bash
-
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-Install dependencies:
-
-Bash
-
-pip install -r requirements.txt
-Set up environment variables:
-
-Copy the example file: cp .env.example .env
-
-Edit the .env file and add all your API keys and secrets.
-
-Running the Application
-Run the web server:
-
-This will start the FastAPI application, making the landing page and API available locally.
-
-Bash
-
-  uvicorn web.app:app --reload
-Open http://127.0.0.1:8000 in your browser.
-
-Run the newsletter pipeline (Dry Run):
-
-This is the primary command for testing. It runs the entire process and generates a preview HTML file without sending any emails.
-
-Bash
-
-  python -m tasks.run_weekly --dry-run
-Check the generated file at out/last_preview.html.
-
-☁️ Deployment Overview
-The application is deployed using a free-tier, multi-cloud strategy:
-
-Backend (Render): The FastAPI application is containerized with Docker and deployed as a Web Service on Render. This handles the API, serves the main landing page, and runs the background tasks.
-
-Database (Supabase): A free PostgreSQL instance on Supabase acts as the production database.
-
-Scheduler (GitHub Actions): A workflow defined in .github/workflows/scheduler.yml runs on a weekly cron schedule. It sends a secure POST request to a protected endpoint on the Render backend to trigger the newsletter generation and sending process.
-
-This setup ensures a clean separation of concerns and leverages the strengths of each platform, all while remaining free.
-
+```bash
 📁 Project Structure
 ├── .github/workflows/      # Contains the GitHub Actions scheduler
 ├── modules/                # Core Python modules for each task
@@ -207,26 +158,133 @@ This setup ensures a clean separation of concerns and leverages the strengths of
 ├── config.py               # Pydantic settings management
 ├── Dockerfile              # Docker configuration for deployment
 └── README.md               # This file
-🧠 Core Code Modules Explained
-tasks/run_weekly.py: The "brain" of the operation. This script is called by the scheduler and orchestrates the entire weekly process: it calls the collector, then the summarizer, then the categorizer, and finally the mailer.
 
-modules/collector.py: The "hands and eyes." This module is responsible for reaching out to the internet (RSS feeds, APIs) to gather the raw content for the newsletter. It's designed to be resilient, with retries and custom headers.
+```
+----
 
-modules/summarizer.py: The "AI core." This module takes the raw content and sends it to the Google Gemini API for summarization. It also contains the crucial fallback logic to a simpler summarizer if the API fails.
+## 🚀 Getting Started (Local Development)
+Follow these instructions to set up and run the project on your local machine.
+```bash
+  Prerequisites
+  Python 3.11+
 
-web/app.py: The "front door." This FastAPI application serves the public-facing landing page and provides the secure API endpoints for subscriptions and for the GitHub Actions scheduler to trigger the weekly job.
+  A code editor (e.g., VS Code)
 
-modules/storage.py: The "memory." It defines the database structure using SQLAlchemy ORM and provides all the functions needed to read from and write to the database.
+  API keys for:
 
-📈 Scaling and Future Improvements
-This project is built on a solid foundation, but here's how it could be scaled and improved for a larger audience:
+  Google Gemini
 
-Task Queuing: For thousands of subscribers, the sending process could take a long time. I would replace the current background task with a robust task queue system like Celery with Redis or RabbitMQ. This would allow for better management of long-running jobs, automatic retries, and the ability to scale workers independently.
+  Mailchimp
 
-Email Service at Scale: Mailchimp's free tier is limited. I would migrate to AWS SES (Simple Email Service) or SendGrid, which offer much lower costs at high volumes and provide more detailed deliverability analytics. The mailer.py module is designed to be easily extensible with a new SESMailer class.
+  X (Twitter) API (Optional)
 
-Advanced Content Curation: The current curation is based on trusted sources. To improve quality, I would implement a ranking algorithm that scores articles based on factors like social media engagement, keyword relevance, and recency, ensuring only the absolute best content makes it into the newsletter.
+  GitHub PAT (Optional, for higher rate limits)
+```
 
-A/B Testing: I would add functionality to A/B test different subject lines or content formats. The orchestration script could generate two versions of the campaign and send them to small segments of the audience, with the winner being sent to the rest.
+---
 
-Dedicated Frontend: While the FastAPI-served page is efficient, a dedicated frontend framework like Next.js or Vue.js would allow for a richer user experience, including an archive of past issues and user account management.
+## ⚙️ Local Setup and Installation
+Follow these steps to run the project on your local machine.
+
+1. **Clone the Repository**
+ ```bash
+    git clone https://github.com/Singhrahul2511/AI-Weekly-News-for-Students.git
+    cd AI-Weekly-News-for-Students
+```
+---
+2. **Create and Activate a Virtual Environment**
+It's highly recommended to use a virtual environment.
+```bash
+    # For Windows
+    python -m venv venv
+    venv\Scripts\activate
+
+    # For macOS/Linux
+    python3 -m venv venv
+    source venv/bin/activate
+    3. Install Dependencies
+    Install all the required Python packages.
+
+```
+---
+3. **Install dependencies**
+```bash
+   pip install -r requirements.txt
+
+```
+---
+
+4. **Make an .env file and set your all APIs**
+```bash
+    Edit the .env file and add all your API keys and secrets.
+    e.g = Gemini_API = "....."
+```
+---
+
+5. **Running the Application**
+Run the web server:
+This will start the FastAPI application, making the landing page and API available locally.
+
+```bash
+
+  uvicorn web.app:app --reload
+  Open http://127.0.0.1:8000 in your browser.
+
+```
+---
+
+6. **Run the newsletter pipeline (Dry Run):**
+This is the primary command for testing. It runs the entire process and generates a preview HTML file without sending any emails.
+
+```bash
+
+  python -m tasks.run_weekly --dry-run
+  Check the generated file at out/last_preview.html.
+```
+
+---
+## ☁️ Deployment Overview
+```bash
+
+    1. The application is deployed using a free-tier, multi-cloud strategy:
+
+    2. Backend (Render): The FastAPI application is containerized with Docker and deployed as a Web Service on Render. This   handles the API, serves the main landing page, and runs the background tasks.
+
+    3. Database (Supabase): A free PostgreSQL instance on Supabase acts as the production database.
+
+    4. Scheduler (GitHub Actions): A workflow defined in .github/workflows/scheduler.yml runs on a weekly cron schedule. It sends a secure POST request to a protected endpoint on the Render backend to trigger the newsletter generation and sending process.
+
+    5. This setup ensures a clean separation of concerns and leverages the strengths of each platform, all while remaining free.
+```
+----
+
+## 🧠 Core Code Modules Explained
+```bash
+
+    tasks/run_weekly.py: The "brain" of the operation. This script is called by the scheduler and orchestrates the entire weekly process: it calls the collector, then the summarizer, then the categorizer, and finally the mailer.
+
+    modules/collector.py: The "hands and eyes." This module is responsible for reaching out to the internet (RSS feeds, APIs) to gather the raw content for the newsletter. It's designed to be resilient, with retries and custom headers.
+
+    modules/summarizer.py: The "AI core." This module takes the raw content and sends it to the Google Gemini API for summarization. It also contains the crucial fallback logic to a simpler summarizer if the API fails.
+
+    web/app.py: The "front door." This FastAPI application serves the public-facing landing page and provides the secure API endpoints for subscriptions and for the GitHub Actions scheduler to trigger the weekly job.
+
+    modules/storage.py: The "memory." It defines the database structure using SQLAlchemy ORM and provides all the functions needed to read from and write to the database.
+```
+---
+
+## 📈 Scaling and Future Improvements
+```bash
+    This project is built on a solid foundation, but here's how it could be scaled and improved for a larger audience:
+
+    Task Queuing: For thousands of subscribers, the sending process could take a long time. I would replace the current background task with a robust task queue system like Celery with Redis or RabbitMQ. This would allow for better management of long-running jobs, automatic retries, and the ability to scale workers independently.
+
+    Email Service at Scale: Mailchimp's free tier is limited. I would migrate to AWS SES (Simple Email Service) or SendGrid, which offer much lower costs at high volumes and provide more detailed deliverability analytics. The mailer.py module is designed to be easily extensible with a new SESMailer class.
+
+    Advanced Content Curation: The current curation is based on trusted sources. To improve quality, I would implement a ranking algorithm that scores articles based on factors like social media engagement, keyword relevance, and recency, ensuring only the absolute best content makes it into the newsletter.
+
+    A/B Testing: I would add functionality to A/B test different subject lines or content formats. The orchestration script could generate two versions of the campaign and send them to small segments of the audience, with the winner being sent to the rest.
+
+    Dedicated Frontend: While the FastAPI-served page is efficient, a dedicated frontend framework like Next.js or Vue.js would allow for a richer user experience, including an archive of past issues and user account management.
+```
+---
