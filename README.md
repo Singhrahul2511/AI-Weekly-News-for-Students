@@ -125,7 +125,7 @@ This project is built on a modern, decoupled architecture. The automation, backe
 | Category    | Technology                                                |
 | :---------- | :-------------------------------------------------------- |
 | **Backend** | Python 3.12, FastAPI, SQLAlchemy                          |
-|**Frontend** | Docker, Render, Supabase                                  |
+|**Frontend** | HTML5, CSS3, Tailwind CSS, Jinja2                         |
 | **Database**| PostgreSQL (hosted on Supabase)                           |
 | **AI / LLM**| Google Gemini API                                         |
 |**Scheduler**| GitHub Actions                                            |
