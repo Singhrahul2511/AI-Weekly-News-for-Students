@@ -13,4 +13,4 @@ jobs:
     steps:
       - name: Call the newsletter trigger endpoint
         run: |
-          curl -X POST "${{ secrets.TRIGGER_URL }}?token=${{ secrets.ADMIN_TOKEN }}"
+          curl -X POST "${{ secrets.TRIGGER_URL }}?token=${{ secrets.ADMIN_TOKEN }}" -H "Authorization: token ${{ secrets.GH_PAT }}"

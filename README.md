@@ -1,6 +1,24 @@
-# AI Weekly Newsletter for Students
+# AI Weekly Newsletter for Students 📰
 
-![AI Weekly Newsletter Banner](https://user-images.githubusercontent.com/1092880/203492733-a385429a-21e1-4c2a-9486-42d4ca7a22a3.png)
+!![Python](https://img.shields.io/badge/Python-3.12-blue.svg) 
+![FastAPI](https://img.shields.io/badge/FastAPI-0.111-green.svg) 
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-red.svg)  
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791.svg) 
+![Supabase](https://img.shields.io/badge/Supabase-Hosted-3ECF8E.svg)  
+![Gemini](https://img.shields.io/badge/Google-Gemini_API-4285F4.svg)  
+![Mailchimp](https://img.shields.io/badge/Mailchimp-API-FFE01B.svg)  
+![GitHub Actions](https://img.shields.io/badge/GitHub-Actions-2088FF.svg)  
+![Docker](https://img.shields.io/badge/Docker-Containerization-2496ED.svg) 
+![Render](https://img.shields.io/badge/Deploy-Render-46E3B7.svg) 
+![Supabase](https://img.shields.io/badge/Deploy-Supabase-3ECF8E.svg)  
+![requests](https://img.shields.io/badge/requests-lib-2F6DB5.svg) 
+![feedparser](https://img.shields.io/badge/feedparser-lib-FF6600.svg) 
+![tweepy](https://img.shields.io/badge/tweepy-lib-1DA1F2.svg) 
+![premailer](https://img.shields.io/badge/premailer-lib-8A2BE2.svg) 
+![sumy](https://img.shields.io/badge/sumy-lib-FF69B4.svg)
+
+<!-- ![AI Weekly Newsletter Banner](https://media.licdn.com/dms/image/v2/D4E12AQENpoWhphq5ug/article-cover_image-shrink_720_1280/B4EZdma0KQHsAI-/0/1749770000044?e=2147483647&v=beta&t=giM1ucaX0lkq4PArTo0vLU6QvyRluUQTe3KANPDpS8w) -->
+
 
 **A fully automated, AI-powered weekly newsletter that curates, summarizes, and delivers the latest advancements in artificial intelligence directly to students. Built with a modern Python stack and deployed on a zero-cost, production-ready infrastructure.**
 
@@ -8,9 +26,9 @@
 
 ### **Live Demo**
 
-* **📰 Live Landing Page:** `https://[YOUR-VERCEL-URL].vercel.app/`
-* **📬 View the Last Sent Issue:** `https://[YOUR-RENDER-URL]/last`
-* **🔑 Admin Panel (Protected):** `https://[YOUR-RENDER-URL]/admin?token=[YOUR_ADMIN_TOKEN]`
+* **📰 Live Landing Page:** `https://ai-newsletter-backend.onrender.com/`
+* **📬 View the Last Sent Issue:** `https://ai-newsletter-backend.onrender.com/last`
+* **🔑 Admin Panel (Protected):** `https://ai-newsletter-backend.onrender.com/admin?token=[YOUR_ADMIN_TOKEN]`
 
 ---
 
@@ -41,8 +59,20 @@ The field of Artificial Intelligence is evolving at an unprecedented rate. For s
 
 This project solves the problem by creating a **fully automated pipeline** that does the heavy lifting. Every week, it scours the internet for the most significant AI news, uses Google's Gemini Pro to generate concise, easy-to-understand summaries, and delivers them in a polished, professional newsletter. This allows students to stay informed in just a few minutes a week.
 
-*(Here is where you can embed a GIF showing the script running and the final newsletter)*
-`![Project Demo GIF]`
+---
+## 🖼️ **Demo Screenshots**
+
+### 📝 Subscribe to Newsletter
+![Analyze Team H2H](demo/one.png)
+
+### 📰 Auto-Generated Weekly Newsletter
+![Get Player Statistics](demo/two.png)
+
+### 📊 Admin Dashboard – Manage Subscribers & Issues
+![Get Player Statistics](demo/th.png)
+
+### 📤 Automated Email Delivery (Sent to Subscribers)
+![Winning Chances](demo/fo.png)
 
 ---
 
