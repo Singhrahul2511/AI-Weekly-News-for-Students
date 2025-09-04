@@ -105,34 +105,35 @@ This project solves the problem by creating a **fully automated pipeline** that 
 This project is built on a modern, decoupled architecture. The automation, backend, and database are all separate, scalable components.
 
 ```bash
-flowchart TD
-    A[GitHub Actions Scheduler <br> (Every Sunday at 20:00 UTC)] --> B{POST Request};
-    B --> C[Render Web Service <br> /tasks/run-weekly-job];
-    C --> D[Background Task];
-    D -- Fetches Content --> E[Internet <br> (RSS, GitHub API, X API)];
-    D -- Summarizes Using --> F[Google Gemini API];
-    D -- Stores Data --> G[Supabase <br> (PostgreSQL Database)];
-    D -- Sends Campaign --> H[Mailchimp API];
-    H -- Delivers Email --> I[Subscriber Inboxes];
-    J[User] --> K[Render Web Service <br> (Landing Page & Subscription)];
-    K -- Writes Data --> G;
+      flowchart TD
+          A[GitHub Actions Scheduler <br> (Every Sunday at 20:00 UTC)] --> B{POST Request};
+          B --> C[Render Web Service <br> /tasks/run-weekly-job];
+          C --> D[Background Task];
+          D -- Fetches Content --> E[Internet <br> (RSS, GitHub API, X API)];
+          D -- Summarizes Using --> F[Google Gemini API];
+          D -- Stores Data --> G[Supabase <br> (PostgreSQL Database)];
+          D -- Sends Campaign --> H[Mailchimp API];
+          H -- Delivers Email --> I[Subscriber Inboxes];
+          J[User] --> K[Render Web Service <br> (Landing Page & Subscription)];
+          K -- Writes Data --> G;
 ```
 
 ---
 ## 🛠️ Tech Stack
+```bash
 
-| Category    | Technology                                                |
-| :---------- | :-------------------------------------------------------- |
-| **Backend** | Python 3.12, FastAPI, SQLAlchemy                          |
-|**Frontend**| Docker, Render, Supabase                                   |
-| **Database**| PostgreSQL (hosted on Supabase)                           |
-| **AI / LLM**| Google Gemini API                                         |
-|**Scheduler**| GitHub Actions                                            |
-|**Deployment**| Docker, Render, Supabase                                 |
-|**Deployment**| Docker, Render, Supabase                                 |
-|**Core**| Libs	requests, feedparser, tweepy, premailer, sumy             |
+      | Category    | Technology                                                |
+      | :---------- | :-------------------------------------------------------- |
+      | **Backend** | Python 3.12, FastAPI, SQLAlchemy                          |
+      |**Frontend**| Docker, Render, Supabase                                   |
+      | **Database**| PostgreSQL (hosted on Supabase)                           |
+      | **AI / LLM**| Google Gemini API                                         |
+      |**Scheduler**| GitHub Actions                                            |
+      |**Deployment**| Docker, Render, Supabase                                 |
+      |**Deployment**| Docker, Render, Supabase                                 |
+      |**Core**| Libs	requests, feedparser, tweepy, premailer, sumy             |
 
-
+```
 ---
 
 ## 📁 Project Structure
