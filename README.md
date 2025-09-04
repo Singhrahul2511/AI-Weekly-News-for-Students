@@ -120,7 +120,7 @@ This project is built on a modern, decoupled architecture. The automation, backe
 
 ---
 ## 🛠️ Tech Stack
-```bash
+
 
       | Category    | Technology                                                |
       | :---------- | :-------------------------------------------------------- |
@@ -133,7 +133,6 @@ This project is built on a modern, decoupled architecture. The automation, backe
       |**Deployment**| Docker, Render, Supabase                                 |
       |**Core**| Libs	requests, feedparser, tweepy, premailer, sumy             |
 
-```
 ---
 
 ## 📁 Project Structure
