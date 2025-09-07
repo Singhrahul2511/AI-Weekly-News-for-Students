@@ -1,10 +1,10 @@
 name: Trigger Weekly Newsletter
 
 on:
-  # Runs every Sunday at 02:30 UTC (8:00 AM Sunday in India)
+  # Runs every Sunday at 03:50 UTC (9:20 AM Sunday in India)
   schedule:
-    - cron: '30 2 * * 0'
-  # Allows manual trigger
+    - cron: '50 3 * * 0'
+  # Allows manual trigger for testing
   workflow_dispatch:
 
 jobs:
@@ -13,4 +13,5 @@ jobs:
     steps:
       - name: Call the newsletter trigger endpoint
         run: |
-          curl -X POST "${{ secrets.TRIGGER_URL }}?token=${{ secrets.ADMIN_TOKEN }}" -H "Authorization: token ${{ secrets.GH_PAT }}"
+          # The --fail flag will cause the script to exit with an error if the HTTP request fails
+          curl -X POST --fail "${{ secrets.TRIGGER_URL }}?token=${{ secrets.ADMIN_TOKEN }}"
