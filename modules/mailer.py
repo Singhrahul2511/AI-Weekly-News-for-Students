@@ -33,6 +33,29 @@ class MailchimpMailer:
         except Exception as e:
             logger.error(f"An unexpected error occurred: {e}")
             raise
+    # modules/mailer.py
+
+    def add_subscriber_to_list(self, email: str) -> bool:
+        """Adds a new subscriber to the Mailchimp list."""
+        logger.info(f"Adding {email} to Mailchimp list {self.list_id}...")
+        data = {
+            "email_address": email,
+            "status": "subscribed",
+        }
+        endpoint = f"lists/{self.list_id}/members"
+        try:
+            self._make_request("POST", endpoint, data)
+            logger.info(f"{email} successfully added to Mailchimp.")
+            return True
+        except requests.exceptions.HTTPError as e:
+            # It's common for this to fail if the user is already on the list, which is okay.
+            if e.response.status_code == 400 and "is already a list member" in e.response.text:
+                logger.warning(f"{email} is already a Mailchimp subscriber.")
+                return True # Treat as success
+            logger.error(f"Failed to add {email} to Mailchimp.")
+            return False
+        except Exception:
+            return False
             
     def create_campaign(self, subject: str, preview_text: str) -> Optional[str]:
         """Creates a new campaign in Mailchimp and returns its ID."""

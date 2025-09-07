@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from typing import List, Optional
-
+from modules.mailer import get_mailer
 from modules.storage import add_subscriber, get_all_active_subscribers, get_last_issue, Subscriber as DBSubscriber, get_db
 from web.models import Subscriber, Issue
 from config import settings
@@ -32,18 +32,26 @@ async def read_root(request: Request):
     # Always pass success and error so the template always renders correctly
     return templates.TemplateResponse("index.html", {"request": request, "success": None, "error": None})
 
+# web/app.py
+
 @app.post("/subscribe", status_code=status.HTTP_201_CREATED)
 async def handle_subscribe(request: Request, email: str = Form(...)):
     """Handles new subscriber submissions."""
     if not email:
         return templates.TemplateResponse("index.html", {"request": request, "error": "Email is required."})
-    
+
     new_subscriber = add_subscriber(email)
     if new_subscriber is None:
         return templates.TemplateResponse("index.html", {"request": request, "error": f"{email} is already subscribed."})
-    
-    return templates.TemplateResponse("index.html", {"request": request, "success": f"Thanks for subscribing, {email}!"})
 
+    # --- ADD THIS NEW CODE ---
+    # Now, also add the subscriber to Mailchimp
+    mailer = get_mailer()
+    mailer.add_subscriber_to_list(email)
+    # --- END OF NEW CODE ---
+
+    return templates.TemplateResponse("index.html", {"request": request, "success": f"Thanks for subscribing, {email}!"})
+    
 @app.get("/last", response_class=HTMLResponse)
 async def view_last_issue():
     """Displays the HTML of the most recently sent newsletter."""
