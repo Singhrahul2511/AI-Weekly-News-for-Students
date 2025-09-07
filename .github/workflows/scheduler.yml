@@ -1,9 +1,9 @@
 name: Trigger Weekly Newsletter
 
 on:
-  # Runs every Sunday at 03:50 UTC (9:20 AM Sunday in India)
+  # Runs every Sunday at 04:50 UTC (10:20 AM Sunday in India)
   schedule:
-    - cron: '50 3 * * 0'
+    - cron: '50 4 * * 0'
   # Allows manual trigger for testing
   workflow_dispatch:
 
