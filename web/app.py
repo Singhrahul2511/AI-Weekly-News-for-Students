@@ -27,7 +27,7 @@ def verify_admin_token(token: str):
 
 # --- Frontend Routes ---
 
-@app.get("/", response_class=HTMLResponse)
+@app.api_route("/", methods=["GET", "HEAD"], response_class=HTMLResponse)
 async def read_root(request: Request):
     # Always pass success and error so the template always renders correctly
     return templates.TemplateResponse("index.html", {"request": request, "success": None, "error": None})
