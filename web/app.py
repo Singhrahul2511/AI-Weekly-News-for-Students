@@ -62,31 +62,24 @@ async def view_last_issue():
 
 # --- Admin Routes ---
 
+# web/app.py
+
 @app.get("/admin", response_class=HTMLResponse)
-async def admin_dashboard(token: str):
+async def admin_dashboard(request: Request, token: str):
     """
-    A simple admin dashboard protected by a query token.
+    A professional admin dashboard protected by a query token.
     Shows subscribers and allows triggering a test send.
     """
     verify_admin_token(token)
     subscribers = get_all_active_subscribers()
-    return f"""
-    <html>
-        <head><title>Admin Dashboard</title></head>
-        <body>
-            <h1>Admin Dashboard</h1>
-            <h2>Subscribers ({len(subscribers)})</h2>
-            <ul>{''.join(f'<li>{s.email}</li>' for s in subscribers)}</ul>
-            <hr>
-            <h2>Actions</h2>
-            <form action="/admin/trigger_dry_run" method="post">
-                <input type="hidden" name="token" value="{token}">
-                <button type="submit">Trigger Dry Run (Generate Preview)</button>
-            </form>
-            <p>View preview at <a href="/last">/last</a> after running.</p>
-        </body>
-    </html>
-    """
+    return templates.TemplateResponse(
+        "admin.html", 
+        {
+            "request": request, 
+            "subscribers": subscribers,
+            "token": token
+        }
+    )
 
 @app.post("/admin/trigger_dry_run")
 async def trigger_dry_run(token: str = Form(...)):

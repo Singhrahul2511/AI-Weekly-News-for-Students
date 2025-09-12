@@ -52,7 +52,7 @@
     <div class="container" bgcolor="#ffffff">
         <div class="header" align="center">
             <h1>AI Weekly News</h1>
-            <p>Your Student Briefing for {{ issue_date }}</p>
+            <p>Weekly AI News of {{ issue_date }}</p>
         </div>
 
         <div class="content">
@@ -65,6 +65,18 @@
                 <p class="item-title"><a href="{{ item.url }}">{{ item.title }}</a></p>
                 <p class="item-summary">{{ item.summary }}</p>
                 <a href="{{ item.url }}" class="cta-button">Read the full story</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if content['Indian_AI_News'] %}
+            <h2 class="section-title">🇮🇳 Indian AI & Tech News</h2>
+            <div class="card list-card">
+                {% for item in content['Indian_AI_News'] %}
+                <a href="{{ item.url }}" class="list-item">
+                    <div class="list-item-title">{{ item.title }}</div>
+                    <div class="list-item-summary">{{ item.summary }}</div>
+                </a>
                 {% endfor %}
             </div>
             {% endif %}
@@ -91,38 +103,6 @@
             </div>
             {% endif %}
 
-            {% if content['Quote_of_the_Week'] %}
-            <h2 class="section-title">💡 Quote of the Week</h2>
-            <div class="quote-section">
-                {% for item in content['Quote_of_the_Week'] %}
-                <p class="quote-text">"{{ item.quote }}"</p>
-                <p class="quote-author">&mdash; {{ item.author }}</p>
-                {% endfor %}
-            </div>
-            {% endif %}
-
-            {% if content['Top_AI_Tools_and_Products'] %}
-            <h2 class="section-title">🛠️ Top AI Tools & Products</h2>
-            <div class="card list-card">
-                {% for item in content['Top_AI_Tools_and_Products'] %}
-                <a href="{{ item.url }}" class="list-item">
-                    <div class="list-item-title">{{ item.name }}</div>
-                    <div class="list-item-summary">{{ item.summary }}</div>
-                </a>
-                {% endfor %}
-            </div>
-            {% endif %}
-            
-            {% if content['Top_X_Post'] %}
-            <h2 class="section-title">🐦 Top X Post</h2>
-            <div class="card">
-                {% for item in content['Top_X_Post'] %}
-                <p class="item-summary">"{{ item.summary }}"</p>
-                <a href="{{ item.url }}" class="cta-button">Read on X</a>
-                {% endfor %}
-            </div>
-            {% endif %}
-
             {% if content['AI_Job_Spotlight'] %}
             <h2 class="section-title">💼 AI Job Spotlight</h2>
             <div class="card list-card">
@@ -134,18 +114,27 @@
                 {% endfor %}
             </div>
             {% endif %}
+
+            {% if content['Quote_of_the_Week'] %}
+            <h2 class="section-title">💡 Quote of the Week</h2>
+            <div class="quote-section">
+                {% for item in content['Quote_of_the_Week'] %}
+                <p class="quote-text">"{{ item.quote }}"</p>
+                <p class="quote-author">&mdash; {{ item.author }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <h2 class="section-title">🤝 Share the Newsletter</h2>
             <div class="card">
               <p class="item-summary">
                 Enjoying AI Weekly Newsletter? Share it with a friend or classmate who wants to stay ahead in the world of AI!
               </p>
               
-              <!-- Forward to Friend -->
               <a href="*|FORWARD|*" class="cta-button">Forward to a Friend</a>
               
-              <!-- Social Media Share -->
               <div class="social-share" style="margin-top:15px;">
-                <p style="margin-bottom:8px;">Share on:</p>
+                 <p style="margin-bottom:8px;">Share on:</p>
                 <a href="https://twitter.com/intent/tweet?url=*|ARCHIVE|*&text=Check+out+AI+Weekly+Newsletter!" target="_blank">🐦 Twitter</a> |
                 <a href="https://www.facebook.com/sharer/sharer.php?u=*|ARCHIVE|*" target="_blank">📘 Facebook</a> |
                 <a href="https://www.linkedin.com/sharing/share-offsite/?url=*|ARCHIVE|*" target="_blank">💼 LinkedIn</a> |
@@ -154,8 +143,7 @@
               </div>
             </div>
 
-
-        <div class="footer" bgcolor="#f8fafc" align="center">
+        </div> <div class="footer" bgcolor="#f8fafc" align="center">
             <p>You're receiving this because you subscribed to AI Weekly News.</p>
             <p><a href="*|UNSUB|*">Unsubscribe</a> | &copy; 2025 AI Weekly News</p>
             <p>Engineer Babu, Aurangabad, Bihar</p>

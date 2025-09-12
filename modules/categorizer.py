@@ -6,104 +6,117 @@ import time
 
 logger = logging.getLogger(__name__)
 
-# --- New: More sophisticated selection logic ---
+# modules/categorizer.py
 
 def select_and_categorize(items: List[Dict]) -> Dict[str, List[Dict]]:
     """
-    Selects the best items for the newsletter from a mixed list of sources
-    and assigns them to specific, engaging sections, ensuring all items are unique.
+    Selects and categorizes items for the newsletter with a final, robust logic
+    to ensure all sections are populated correctly.
     """
     logger.info("Categorizing and selecting top items...")
-    
-    # Use a set to track which items have been assigned to prevent duplicates
+
+    # --- Step 1: Initialize categories and a set to track used URLs ---
     assigned_urls = set()
-    
     categorized_content = {
-        "Introduction": [],
         "Big Story of the Week": [],
+        "Indian_AI_News": [],
         "Top Research Paper": [],
         "Top GitHub Repo": [],
-        "Quote_of_the_Week": [], # New!
-        "AI_Job_Spotlight": [], # New!
-        "Top_AI_Tools_and_Products": [], # Renamed
-        "Top_X_Post": [], # Renamed
-        "Closing Notes": [],
+        "AI_Job_Spotlight": [],
+        "Quote_of_the_Week": [],
     }
-    
-    # Separate items by source for easier selection
-    blogs = [item for item in items if item.get("source") == "rss"]
+
+    # --- Step 2: Correctly separate all items into exclusive lists ---
     papers = [item for item in items if "arxiv.org" in item.get("url", "")]
     repos = [item for item in items if item.get("source") == "github"]
-    x_posts = [item for item in items if item.get("source") == "x"]
-
-    # --- Selection Logic ---
+    jobs = [item for item in items if "weworkremotely.com" in item.get("url", "")]
     
-    # 1. Select the Big Story (from major blogs)
-    if blogs:
-        # Prioritize OpenAI, Google, DeepMind for big stories
-        priority_keywords = ["openai", "google", "deepmind", "anthropic"]
-        big_story = next((b for b in blogs if any(key in b['url'] for key in priority_keywords)), blogs[0])
-        big_story['category'] = "Big Story of the Week"
-        categorized_content["Big Story of the Week"].append(big_story)
-        assigned_urls.add(big_story['url'])
+    all_blogs = [
+        item for item in items 
+        if item.get("source") == "rss" 
+        and "arxiv.org" not in item.get("url", "")
+        and "weworkremotely.com" not in item.get("url", "")
+    ]
 
-    # 2. Select the Top Research Paper
-    if papers:
-        top_paper = papers[0]
-        top_paper['category'] = "Top Research Paper"
-        categorized_content["Top Research Paper"].append(top_paper)
-        assigned_urls.add(top_paper['url'])
+    indian_news_urls = ["livemint.com", "timesofindia.indiatimes.com"]
+    indian_news = []
+    general_blogs = []
+    for blog in all_blogs:
+        if any(url in blog.get("url", "") for url in indian_news_urls):
+            indian_news.append(blog)
+        else:
+            general_blogs.append(blog)
 
-    # 3. Select the Top GitHub Repo
-    if repos:
-        top_repo = repos[0]
-        top_repo['category'] = "Top GitHub Repo"
-        categorized_content["Top GitHub Repo"].append(top_repo)
-        assigned_urls.add(top_repo['url'])
+    # --- Step 3: Define a helper function to safely add items ---
+    def add_item(section, item_list, max_items=1):
+        added_count = 0
+        for item in item_list:
+            if item.get('url') and item['url'] not in assigned_urls and added_count < max_items:
+                categorized_content[section].append(item)
+                assigned_urls.add(item['url'])
+                added_count += 1
 
-    # 4. Select the Top X Post
-    if x_posts:
-        top_post = x_posts[0]
-        top_post['category'] = "Top X Post"
-        categorized_content["Top_X_Post"].append(top_post)
-        assigned_urls.add(top_post['url'])
+    # --- Step 4: Fill categories with priority content first ---
+    priority_keywords = ["openai", "google", "deepmind", "anthropic", "aws"]
+    priority_blogs = [b for b in general_blogs if any(key in b.get('url', '') for key in priority_keywords)]
+    
+    add_item("Big Story of the Week", priority_blogs)
+    add_item("Indian_AI_News", indian_news, 2)
+    add_item("Top Research Paper", papers)
+    add_item("Top GitHub Repo", repos)
 
-    # --- New Static & Dynamic Sections for Engagement ---
+    # --- Step 5: Use Fallbacks to fill any remaining empty sections ---
+    remaining_blogs = [b for b in general_blogs if b.get('url') and b['url'] not in assigned_urls]
+    remaining_papers = [p for p in papers if p.get('url') and p['url'] not in assigned_urls]
 
-    # import time
+    if not categorized_content["Big Story of the Week"]:
+        add_item("Big Story of the Week", remaining_blogs)
+    if not categorized_content["Indian_AI_News"]:
+        add_item("Indian_AI_News", remaining_blogs, 2)
+    if not categorized_content["Top Research Paper"]:
+        add_item("Top Research Paper", remaining_papers)
 
-    # 5. Add a Quote of the Week
+    # --- Step 6: Add static and job sections ---
+    if jobs:
+        formatted_jobs = []
+        for job in jobs[:2]:
+            parts = job['title'].split(':', 1)
+            company = parts[0].strip()
+            title = parts[1].strip() if len(parts) > 1 else "Software Engineer"
+            formatted_jobs.append({
+                "title": title, "company": company, "url": job['url'], "description": job['summary']
+            })
+        categorized_content["AI_Job_Spotlight"] = formatted_jobs
+
+    # --- THIS IS THE UPDATED QUOTES LIST ---
     quotes = [
         {"quote": "The science of today is the technology of tomorrow.", "author": "Edward Teller"},
         {"quote": "The best way to predict the future is to invent it.", "author": "Alan Kay"},
-        {"quote": "AI is the new electricity.", "author": "Andrew Ng"}
+        {"quote": "AI is the new electricity.", "author": "Andrew Ng"},
+        {"quote": "Success in creating AI would be the biggest event in human history. Unfortunately, it might also be the last.", "author": "Stephen Hawking"},
+        {"quote": "The real problem is not whether machines think but whether men do.", "author": "B.F. Skinner"},
+        {"quote": "Anything that could give rise to smarter-than-human intelligence—in the form of AI, brain-computer interfaces, or neuroscience-based human intelligence enhancement—wins hands down beyond contest as doing the most to change the world.", "author": "Eliezer Yudkowsky"},
+        {"quote": "The development of full artificial intelligence could spell the end of the human race.", "author": "Stephen Hawking"},
+        {"quote": "Machine intelligence is the last invention that humanity will ever need to make.", "author": "Nick Bostrom"},
+        {"quote": "I am telling you, the world’s first trillionaires are going to come from somebody who masters AI and all its derivatives and applies it in ways we never thought of.", "author": "Mark Cuban"},
+        {"quote": "Some people call this artificial intelligence, but the reality is this technology will enhance us. So instead of artificial intelligence, I think we'll augment our intelligence.", "author": "Ginni Rometty"},
+        {"quote": "The question of whether a computer can think is no more interesting than the question of whether a submarine can swim.", "author": "Edsger W. Dijkstra"},
+        {"quote": "Artificial intelligence is growing up fast, as are robots whose facial expressions can elicit empathy and make your mirror neurons quiver.", "author": "Diane Ackerman"},
+        {"quote": "It seems probable that once the machine thinking method had started, it would not take long to outstrip our feeble powers.", "author": "Alan Turing"},
+        {"quote": "By far, the greatest danger of Artificial Intelligence is that people conclude too early that they understand it.", "author": "Eliezer Yudkowsky"},
+        {"quote": "What I'm trying to do is the sensitive task of wrapping AI in a rational, humanistic ethics.", "author": "Fei-Fei Li"},
+        {"quote": "The key to artificial intelligence has always been the representation.", "author": "Jeff Hawkins"},
+        {"quote": "The pace of progress in artificial intelligence is incredibly fast. Unless you have direct exposure to groups like Deepmind, you have no idea how fast—it is growing at a pace close to exponential.", "author": "Elon Musk"},
+        {"quote": "We are entering a new world. The technologies of machine learning, speech recognition, and natural language understanding are reaching a nexus of capability.", "author": "Jeff Bezos"},
+        {"quote": "If you invent a breakthrough in artificial intelligence, so machines can learn, that is worth 10 Microsofts.", "author": "Bill Gates"},
+        {"quote": "Data is the new oil? No, data is the new soil.", "author": "David McCandless"},
+        {"quote": "In the long run, I think we will evolve in partnership with our machinery.", "author": "Kevin Kelly"},
+        {"quote": "Everything we love about civilization is a product of intelligence, so amplifying our human intelligence with artificial intelligence has the potential of helping civilization flourish like never before.", "author": "Max Tegmark"},
     ]
     chosen_quote = random.choice(quotes)
-    chosen_quote['title'] = f"Quote by {chosen_quote['author']}"
+    # The URL needs to be unique for the database, but the title and summary can be from the chosen quote
     chosen_quote['url'] = f"#/quote-{int(time.time())}"
-    chosen_quote['summary'] = chosen_quote['quote']
     categorized_content["Quote_of_the_Week"].append(chosen_quote)
 
-    # 6. Add an AI Job Spotlight (Now with 2 jobs and real links)
-    jobs = [
-        {"title": "AI/ML Engineer Intern", "company": "Google", "url": "https://careers.google.com/students/", "description": "Work on real-world machine learning models and data pipelines at a leading tech company."},
-        {"title": "Data Science Research Assistant", "company": "MIT Media Lab", "url": "https://www.media.mit.edu/jobs/", "description": "Assist PhD students in cutting-edge AI research, focusing on NLP and computer vision."}
-    ]
-    # Add unique URLs and summaries to each job
-    for job in jobs:
-        job['url'] = job['url'] # Using the real URL
-        job['summary'] = job['description']
-    categorized_content["AI_Job_Spotlight"] = jobs[:2] # Select the first two jobs
-
-    # 7. Add Top AI Tools
-    tools = [
-        {"name": "Hugging Face", "url": "https://huggingface.co/", "summary": "The ultimate platform for pre-trained models and datasets."},
-        {"name": "Replicate", "url": "https://replicate.com/", "summary": "Run open-source ML models with a cloud API."},
-        {"name": "Weights & Biases", "url": "https://wandb.ai/", "summary": "The developer-first MLOps platform for experiment tracking."}
-    ]
-    for tool in tools:
-        tool['title'] = tool['name']
-    categorized_content["Top_AI_Tools_and_Products"] = tools
-    
-    logger.info("Finished categorizing content with real data and new sections.")
+    logger.info("Finished categorizing content with final robust logic.")
     return categorized_content

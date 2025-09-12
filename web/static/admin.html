@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - AI Weekly</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-blue-600 text-white flex items-center justify-center rounded-full text-2xl font-bold shadow-md">
+                    AI
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
+                    <p class="text-gray-500">AI Weekly Newsletter Control Panel</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                <h2 class="text-xl font-semibold mb-3 text-gray-700">Generate Newsletter Preview</h2>
+                <p class="text-gray-600 mb-4">
+                    Run the full pipeline to collect and summarize content, then generate a preview HTML file without sending any emails.
+                </p>
+                <form action="/admin/trigger_dry_run" method="post">
+                    <input type="hidden" name="token" value="{{ token }}">
+                    <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+                        Trigger Dry Run
+                    </button>
+                </form>
+                <p class="text-sm text-center text-gray-500 mt-3">Check the result at <a href="/last" target="_blank" class="text-blue-600 hover:underline">/last</a></p>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                <h2 class="text-xl font-semibold mb-3 text-red-600">Trigger Live Send</h2>
+                <p class="text-gray-600 mb-4">
+                    <strong>Warning:</strong> This will trigger the live newsletter to be sent to all subscribers. Use with caution.
+                </p>
+                <form action="/tasks/run-weekly-job" method="post">
+                    <input type="hidden" name="token" value="{{ token }}">
+                    <button type="submit" class="w-full bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition">
+                        Send to All Subscribers
+                    </button>
+                </form>
+                 <p class="text-sm text-center text-gray-500 mt-3">This is the same action as the weekly cron job.</p>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-800">Subscribers ({{ subscribers|length }})</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subscribed At</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for subscriber in subscribers %}
+                        <tr>
+                            <td class="py-4 px-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ subscriber.email }}</td>
+                            <td class="py-4 px-4 whitespace-nowrap text-sm text-gray-500">{{ subscriber.subscribed_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="2" class="text-center py-4 text-gray-500">No subscribers yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
